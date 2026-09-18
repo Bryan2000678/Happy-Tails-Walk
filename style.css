@@ -1,0 +1,283 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f7f8f5;
+    color: #19382c;
+    line-height: 1.6;
+}
+
+/* HEADER */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 8%;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e9e5;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.nav-button,
+.main-button {
+    display: inline-block;
+    text-decoration: none;
+    background: #244c3a;
+    color: white;
+    padding: 13px 22px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.nav-button:hover,
+.main-button:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+/* HERO */
+
+.hero {
+    padding: 100px 8%;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.location,
+.small-title {
+    color: #547765;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+}
+
+.hero h1 {
+    font-size: clamp(48px, 7vw, 82px);
+    line-height: 1.02;
+    letter-spacing: -3px;
+    margin-bottom: 28px;
+}
+
+.hero-text {
+    font-size: 20px;
+    color: #617168;
+    max-width: 550px;
+    margin-bottom: 32px;
+}
+
+/* SERVICE */
+
+.service {
+    background: #eef4f0;
+    padding: 70px 8%;
+}
+
+.service-content {
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+}
+
+.service h2 {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.service p {
+    color: #617168;
+    max-width: 600px;
+}
+
+.price {
+    font-size: 50px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* BOOKING */
+
+.booking {
+    max-width: 700px;
+    margin: auto;
+    padding: 90px 8%;
+}
+
+.booking h2,
+.how-it-works h2 {
+    font-size: 42px;
+    margin-bottom: 12px;
+}
+
+.booking > p:not(.small-title) {
+    color: #617168;
+    margin-bottom: 35px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label {
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #d6ddd8;
+    border-radius: 9px;
+    background: white;
+    font-size: 16px;
+    color: #19382c;
+}
+
+input:focus,
+select:focus {
+    outline: 2px solid #9ab5a5;
+    border-color: #547765;
+}
+
+button {
+    margin-top: 20px;
+    padding: 16px;
+    border: none;
+    border-radius: 10px;
+    background: #244c3a;
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+/* HOW IT WORKS */
+
+.how-it-works {
+    background: #ffffff;
+    padding: 90px 8%;
+}
+
+.steps {
+    max-width: 1100px;
+    margin: 45px auto 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.steps span {
+    font-size: 14px;
+    color: #547765;
+    font-weight: 700;
+}
+
+.steps h3 {
+    margin: 10px 0;
+    font-size: 20px;
+}
+
+.steps p {
+    color: #617168;
+}
+
+/* FOOTER */
+
+footer {
+    background: #19382c;
+    color: white;
+    text-align: center;
+    padding: 55px 20px;
+}
+
+footer h2 {
+    margin-bottom: 10px;
+}
+
+footer p {
+    opacity: 0.75;
+    margin: 5px;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    header {
+        padding: 18px 5%;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .nav-button {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+
+    .hero {
+        padding: 70px 6%;
+    }
+
+    .hero h1 {
+        letter-spacing: -2px;
+    }
+
+    .service {
+        padding: 60px 6%;
+    }
+
+    .service-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .price {
+        font-size: 42px;
+    }
+
+    .booking {
+        padding: 70px 6%;
+    }
+
+    .booking h2,
+    .how-it-works h2 {
+        font-size: 34px;
+    }
+
+    .how-it-works {
+        padding: 70px 6%;
+    }
+
+    .steps {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+}
