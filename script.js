@@ -1,60 +1,59 @@
-const SUPABASE_URL = "https://ncopiffauvfglewnczts.supabase.co";
+(() => {
+  const form = document.querySelector('#booking-form');
+  const confirmation = document.querySelector('#booking-confirmation');
+  const dateField = document.querySelector('#walk-date');
+  document.querySelector('#year').textContent = new Date().getFullYear();
 
-// Paste your Supabase PUBLISHABLE KEY here on GitHub.
-// Do NOT use your secret/service-role key.
-const SUPABASE_KEY = sb_publishable_KvwoCdcwIl_5XsSMCvWntw_WSnU2qcg
+  const today = new Date();
+  const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  dateField.min = localToday;
 
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
-const form = document.getElementById("booking-form");
-
-form.addEventListener("submit", async function (event) {
+  form.addEventListener('submit', (event) => {
     event.preventDefault();
+    confirmation.hidden = true;
+    if (!form.reportValidity()) return;
 
-    const date = document.getElementById("date").value;
-    const time = document.getElementById("time").value;
-    const name = document.getElementById("name").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const dog = document.getElementById("dog").value.trim();
-    const address = document.getElementById("address").value.trim();
-    const payment = document.getElementById("payment").value;
+    const data = new FormData(form);
+    const request = {
+      id: 'HTW-' + Date.now(),
+      ownerName: String(data.get('ownerName')).trim(),
+      phone: String(data.get('phone')).trim(),
+      dogName: String(data.get('dogName')).trim(),
+      duration: String(data.get('duration')),
+      date: String(data.get('date')),
+      time: String(data.get('time')),
+      notes: String(data.get('notes')).trim(),
+      payment: 'Cash, Zelle, or Cash App (in person)',
+      createdAt: new Date().toISOString(),
+    };
 
-    if (!date || !time || !name || !phone || !dog || !address || !payment) {
-        alert("Please fill out all the information.");
-        return;
+    try {
+      const saved = JSON.parse(localStorage.getItem('happyTailsWalkRequests') || '[]');
+      saved.push(request);
+      localStorage.setItem('happyTailsWalkRequests', JSON.stringify(saved));
+    } catch (error) {
+      // The on-page confirmation still works if browser storage is unavailable.
     }
 
-    const { error } = await supabaseClient
-        .from("bookings")
-        .insert({
-            date: date,
-            time: time,
-            customer_name: name,
-            phone: phone,
-            dog_name: dog,
-            address: address,
-            payment_method: payment,
-            status: "pending"
-        });
+    const friendlyDate = new Intl.DateTimeFormat('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+    }).format(new Date(request.date + 'T12:00:00'));
 
-    if (error) {
-        console.error("Booking error:", error);
-        alert("Sorry, we couldn't submit your booking. Please try again.");
-        return;
-    }
+    confirmation.innerHTML = '<strong>Thanks, ' + escapeHtml(request.ownerName) + '!</strong>' +
+      '<p>Your request for <b>' + escapeHtml(request.dogName) + '</b> is ready: ' +
+      escapeHtml(request.duration.toLowerCase()) + ' on ' + escapeHtml(friendlyDate) + ', ' +
+      escapeHtml(request.time.toLowerCase()) + '.</p>' +
+      '<p class="local-note">Request ' + escapeHtml(request.id) +
+      ' · This is a request, not a confirmed appointment. It is saved in this browser only and has not been sent to the walker. Please contact Happy Tails directly to confirm availability.</p>';
+    confirmation.hidden = false;
+    confirmation.focus();
+    confirmation.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    form.querySelector('.submit-button').textContent = 'Request saved ✓';
+  });
 
-    alert(
-        "🐾 Walk Request Received!\n\n" +
-        "Thank you, " + name + "!\n\n" +
-        dog + "'s walk request has been received.\n\n" +
-        "Date: " + date + "\n" +
-        "Time: " + time + "\n" +
-        "Price: $25\n" +
-        "Payment: " + payment
-    );
-
-    form.reset();
-});
+  function escapeHtml(value) {
+    return value.replace(/[&<>"']/g, (character) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    })[character]);
+  }
+})();
