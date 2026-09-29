@@ -6,18 +6,18 @@ A responsive website for dog walking in East Boston.
 
 - index.html — main page and booking request form
 - style.css — responsive styling
-- script.js — date validation and on-page confirmation
+- script.js — date validation, email delivery, and on-page confirmation
 
 ## GitHub Pages
 
-This repository already publishes from the main branch and repository root. The current site address is:
+This repository publishes from the main branch and repository root. The site address is:
 
 https://bryan2000678.github.io/Happy-Tails-Walk/
 
 After registering happytailswalks.com, add it under Settings → Pages → Custom domain, then point the domain DNS records to GitHub Pages and enable HTTPS.
 
-## Booking request status
+## Booking requests
 
-The form checks required fields, prevents past dates, and shows a confirmation after Finish. The current static form saves its request in the visitor's browser only; it does not send the request to the walker or confirm availability. Connect an email form service or backend before relying on it for incoming bookings.
+The booking form sends the customer's name, phone number, dog name, preferred walk length/date/time, and optional notes to Happy Tails Walks by email using FormSubmit. The first form submission requires the inbox owner to click FormSubmit's verification link before requests can be delivered. The on-page message confirms a request was sent; it does not confirm an appointment. Happy Tails must contact the customer to confirm availability.
 
-The site offers dog walking only and lists in-person cash, Zelle, or Cash App. It does not take payment online.
+The site offers dog walking only, with in-person cash, Zelle, or Cash App. It does not process payments.
