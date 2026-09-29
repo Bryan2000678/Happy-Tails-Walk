@@ -31,6 +31,12 @@
     const friendlyDate = new Intl.DateTimeFormat('en-US', {
       weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
     }).format(new Date(request.date + 'T12:00:00'));
+    const confirmText = 'Hi ' + request.ownerName + '! Happy Tails Walks confirms your ' + request.duration.toLowerCase() + ' walk for ' + request.dogName + ' on ' + friendlyDate + ' during ' + request.time.toLowerCase() + '. See you then!';
+    const declineText = 'Hi ' + request.ownerName + ', thank you for requesting a walk for ' + request.dogName + '. Unfortunately, we are not available ' + friendlyDate + ' during ' + request.time.toLowerCase() + '. Please contact us to discuss another time. - Happy Tails Walks';
+    const phoneForSms = request.phone.replace(/[^\d+]/g, '');
+    const smsSeparator = /iPad|iPhone|iPod/i.test(navigator.userAgent) ? '&' : '?';
+    const smsLink = (message) => 'sms:' + phoneForSms + smsSeparator + 'body=' + encodeURIComponent(message);
+
     const message = [
       'Happy Tails Walk request',
       'Request: ' + request.id,
@@ -43,7 +49,10 @@
       'Payment: ' + request.payment,
       'Notes: ' + (request.notes || 'None'),
       '',
-      'Please contact the customer to confirm availability. The appointment is not confirmed until Happy Tails confirms it.',
+      'CONFIRM by text (open this link on your phone): ' + smsLink(confirmText),
+      'DECLINE by text (open this link on your phone): ' + smsLink(declineText),
+      '',
+      'The customer has requested a walk; it is not confirmed until Happy Tails confirms it.',
     ].join(String.fromCharCode(10));
 
     submitButton.disabled = true;
