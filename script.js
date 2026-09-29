@@ -1,5 +1,4 @@
 (() => {
-  
   const form = document.querySelector('#booking-form');
   const confirmation = document.querySelector('#booking-confirmation');
   const dateField = document.querySelector('#walk-date');
@@ -63,7 +62,7 @@
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || result.success === false || result.success === 'false') {
-        throw new Error(result.message || 'The request could not be sent.');
+        throw new Error(result.message || 'Email service response: ' + response.status);
       }
 
       confirmation.innerHTML = '<strong>Thanks, ' + escapeHtml(request.ownerName) + '!</strong>' +
@@ -76,7 +75,9 @@
       confirmation.focus();
       confirmation.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     } catch (error) {
+      const details = error && error.message ? error.message : 'Unknown email delivery issue.';
       confirmation.innerHTML = '<strong>We could not send your request just now.</strong>' +
+        '<p>Delivery detail: ' + escapeHtml(details) + '</p>' +
         '<p>Please try again later or email <a href="mailto:bryanbienaime.23@gmail.com">Happy Tails Walks</a>.</p>';
       confirmation.hidden = false;
       confirmation.focus();
