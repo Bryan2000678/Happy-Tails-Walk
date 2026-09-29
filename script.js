@@ -1,7 +1,9 @@
 (() => {
+  
   const form = document.querySelector('#booking-form');
   const confirmation = document.querySelector('#booking-confirmation');
   const dateField = document.querySelector('#walk-date');
+  const submitButton = form.querySelector('.submit-button');
   document.querySelector('#year').textContent = new Date().getFullYear();
 
   const today = new Date();
@@ -9,7 +11,7 @@
   dateField.min = localToday;
   form.querySelector('[name="notes"]').maxLength = 500;
 
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
     confirmation.hidden = true;
     if (!form.reportValidity()) return;
@@ -30,7 +32,7 @@
     const friendlyDate = new Intl.DateTimeFormat('en-US', {
       weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
     }).format(new Date(request.date + 'T12:00:00'));
-    const emailBody = [
+    const message = [
       'Happy Tails Walk request',
       'Request: ' + request.id,
       'Customer: ' + request.ownerName,
@@ -42,22 +44,46 @@
       'Payment: ' + request.payment,
       'Notes: ' + (request.notes || 'None'),
       '',
-      'Please confirm availability with the customer.',
+      'Please contact the customer to confirm availability. The appointment is not confirmed until Happy Tails confirms it.',
     ].join(String.fromCharCode(10));
-    const emailUrl = 'mailto:bryanbienaime.23@gmail.com?subject=' +
-      encodeURIComponent('Happy Tails walk request - ' + request.dogName) +
-      '&body=' + encodeURIComponent(emailBody);
 
-    confirmation.innerHTML = '<strong>Thanks, ' + escapeHtml(request.ownerName) + '!</strong>' +
-      '<p>Your request for <b>' + escapeHtml(request.dogName) + '</b> is ready: ' +
-      escapeHtml(request.duration.toLowerCase()) + ' on ' + escapeHtml(friendlyDate) + ', ' +
-      escapeHtml(request.time.toLowerCase()) + '.</p>' +
-      '<a class="button button-dark email-request" href="' + escapeHtml(emailUrl) + '">Open email draft <span aria-hidden="true">↗</span></a>' +
-      '<p class="local-note">Press Send in your email app to deliver the request. This is not a confirmed appointment; Happy Tails must confirm availability.</p>';
-    confirmation.hidden = false;
-    confirmation.focus();
-    confirmation.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    form.querySelector('.submit-button').textContent = 'Request ready ✓';
+    submitButton.disabled = true;
+    submitButton.textContent = 'Sending request…';
+
+    try {
+      const response = await fetch('https://formsubmit.co/ajax/bryanbienaime.23@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          _subject: 'Happy Tails walk request - ' + request.dogName,
+          name: request.ownerName,
+          phone: request.phone,
+          message,
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result.success === false || result.success === 'false') {
+        throw new Error(result.message || 'The request could not be sent.');
+      }
+
+      confirmation.innerHTML = '<strong>Thanks, ' + escapeHtml(request.ownerName) + '!</strong>' +
+        '<p>Your request for <b>' + escapeHtml(request.dogName) + '</b> was sent: ' +
+        escapeHtml(request.duration.toLowerCase()) + ' on ' + escapeHtml(friendlyDate) + ', ' +
+        escapeHtml(request.time.toLowerCase()) + '.</p>' +
+        '<p class="local-note">This is a request, not a confirmed appointment. Happy Tails will contact you to confirm availability.</p>';
+      form.reset();
+      confirmation.hidden = false;
+      confirmation.focus();
+      confirmation.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } catch (error) {
+      confirmation.innerHTML = '<strong>We could not send your request just now.</strong>' +
+        '<p>Please try again later or email <a href="mailto:bryanbienaime.23@gmail.com">Happy Tails Walks</a>.</p>';
+      confirmation.hidden = false;
+      confirmation.focus();
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Finish & request walk';
+    }
   });
 
   function escapeHtml(value) {
